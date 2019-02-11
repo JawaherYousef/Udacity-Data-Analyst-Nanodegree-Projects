@@ -1,0 +1,331 @@
+Students Performance Exams score by Jawaher AlDamegh
+========================================================
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using in your analysis 
+library(ggplot2)
+library(GGally)
+library(scales)
+library(memisc)
+library(lattice)
+library(MASS)
+library(gridExtra)
+library(dplyr)
+library(reshape)
+library(knitr)
+```
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+StudentsPerformance<-read.csv('StudentsPerformance.csv')
+names(StudentsPerformance)
+```
+
+
+>This Students Performance dataset contains 1,000 obersvations with 8 variables, I will do some analyzing to determine which gender reach the highest score in Math, reading and writing subjects.
+
+
+# Univariate Plots Section
+
+
+```{r echo=FALSE, Univariate_Plots}
+#load summary of the data
+names(StudentsPerformance)
+summary(StudentsPerformance)
+```
+
+
+
+> As shown in above summary, the lowest degrees in math is 0 while the writing is 10 and reading 17. 
+> So We can say that there is a defect in math subject that may happend because the student didn't attend to the test or that may resulted by the way of teaching or the student has weakness in math. 
+> To solve this issue we should change the method of how teaching mathematics or improve the performance of students, for example, by adding more classes.
+
+> While it is clear to us that the average scores in all tests (the 3 subjects) are convergent and this is a good sign.
+
+
+# Univariate Analysis
+
+
+### What is the structure of your dataset?
+
+> As previously described, my dataset contain 1,000 observations of 8 variables.
+
+
+### What we can observe from this dataset?
+
+> I will apply some visualizations to answer the question:
+
+
+```{r echo=FALSE}
+#create a table of gender
+table(StudentsPerformance$gender)
+```
+
+```{r}
+#create a barplot of gender
+qplot(StudentsPerformance$gender)
+```
+
+
+>The female in this dataset are more then male as appear. 
+
+```{r}
+#Distribution of educational level 
+qplot(StudentsPerformance$parental.level.of.education, main="Education levels", 
+   xlab="Level of education")
+```
+
+
+```{r}
+#Distribution of educational leve by gender in table
+table(StudentsPerformance$parental.level.of.education, StudentsPerformance$gender)
+```
+
+```{r}
+#Distribution of educational level by gender
+education <- table(StudentsPerformance$gender, StudentsPerformance$parental.level.of.education)
+barplot(education, main="Level of education by Gender", 
+   xlab="Level of education", legend = c("Female", "Male"))
+```
+
+
+> As shown, the highest proportion of the sample includes associate's degree students while the lowest proportion are those with a master's degree.
+
+
+# Bivariate Plots Section
+
+
+> **In this section** we will refer two variables toghter, then we will analyze them to reach a clear results about our dataset by answuring some questions:
+
+
+### Which major factors contribute to test outcomes?
+
+```{r}
+#which level of education can gained highest score in math subject
+ggplot(data = StudentsPerformance) +
+  geom_boxplot(mapping = aes(x = parental.level.of.education, y = math.score)) +
+  coord_flip()
+```
+
+> As observed that the average scores that around 75 (which is the highest) obtained by the master's degree student in math subject.
+
+```{r}
+#which level of education can gained highest score in reading subject
+ggplot(data = StudentsPerformance) +
+  geom_boxplot(mapping = aes(x = parental.level.of.education, y = reading.score)) +
+  coord_flip()
+```
+
+> Regarding the reading subject the master's degree students obtained highest average scores which is 75 score.
+
+```{r}
+#which level of education can gained highest score in writing subject
+ggplot(data = StudentsPerformance) +
+  geom_boxplot(mapping = aes(x = parental.level.of.education, y = writing.score)) +
+  coord_flip()
+```
+
+> Here also we observed that the master's degree students obtained highest average scores in writing subject which is 75 score.
+
+
+### Specify who completed the test preparation course more if they are female or male?
+```{r}
+# table of gender VS. test preparation course
+table(StudentsPerformance$test.preparation.course, StudentsPerformance$gender)
+```
+
+> We observed that the number of female who did this test preparation are more than the male regardless of the small difference.
+
+
+# Bivariate Analysis
+
+
+### Talk about some of the relationships you observed in this part of the \investigation. How did the feature(s) of interest vary with other features in \the dataset?
+
+## Subjects VS. Race.ethnicity:
+
+> In our dataset we distributed people who did the tests into 5 group.
+> We will explore which of the groups has the highest scores in each of the three subjects:
+
+```{r}
+#Distribution of math score by each group
+ggplot(data = StudentsPerformance, mapping = aes(x = math.score)) +
+  geom_histogram(binwidth = 5, color = "white") +
+  facet_wrap(~ race.ethnicity, nrow = 4)
+```
+
+> As apear groub C has the highest scores in math then group D.
+
+```{r}
+#Distribution of writing score by each group
+ggplot(data = StudentsPerformance, mapping = aes(x = writing.score)) +
+  geom_histogram(binwidth = 5, color = "white") +
+  facet_wrap(~ race.ethnicity, nrow = 4)
+```
+
+> Also in writing subject group C followed by group D obtained the highest scores.
+
+```{r}
+#Distribution of reading score by each group
+ggplot(data = StudentsPerformance, mapping = aes(x = reading.score)) +
+  geom_histogram(binwidth = 5, color = "white") +
+  facet_wrap(~ race.ethnicity, nrow = 4)
+```
+
+> At the end of these three plots, we can saw that the group C followed by group D has gained always a highest scores.
+
+
+
+### Did you observe any interesting relationships between the other features \(not the main feature(s) of interest)?
+
+## Subjects VS. Gender:
+
+> **In this section** we will find the relationship between the math, reading and writing scores and gender to see who gained more scores female or male.
+
+```{r echo=FALSE, Bivariate_Plots}
+#apply who has obtained more scores by gender
+ggplot(StudentsPerformance, 
+       aes(x=gender, y=math.score,fill=gender)) + 
+       geom_boxplot()+
+       xlab("Gender") + ylab("Math Scores") +
+       ggtitle("Math Scores by Gender")
+```
+
+> As shown, male gained more scores than the female.
+
+```{r}
+#apply who has obtained more scores by gender
+ggplot(StudentsPerformance, 
+       aes(x=gender, y=writing.score,fill=gender)) + 
+       geom_boxplot()+
+       xlab("Gender") + ylab("Writing Scores") +
+       ggtitle("Writing Scores by Gender")
+```
+
+> In a clear deferincess female has the highest avrage than the male.
+
+```{r}
+#apply who has obtained more scores by gender
+ggplot(StudentsPerformance, 
+       aes(x=gender, y=reading.score,fill=gender)) + 
+       geom_boxplot()+
+       xlab("Gender") + ylab("Reading Scores") +
+       ggtitle("Reading Scores by Gender")
+```
+
+> By a clear margin we can see that the female obtained a higher scores in reading subject than the male.
+
+
+# Multivariate Plots Section & Multivariate Analysis
+
+> **In this section** We will combine more than two variables together to see the correlations between these variables:
+
+
+```{r, Multivariate_Plots}
+#the correlation between gender, race.ethnicity and level of education
+ggplot(StudentsPerformance, aes(x=race.ethnicity,y=parental.level.of.education)) +
+      geom_point(aes(color =  gender))
+```
+
+>The figure above shows whether males or females predominate in each group and each level of education.
+
+```{r echo=FALSE}
+ggplot(StudentsPerformance, aes(x=race.ethnicity,y=gender)) +
+      geom_point(aes(color =  parental.level.of.education))
+```
+
+> Similar to the previous figure but it's shows which level of education predominate in each group and it's distrubted by gender.
+
+
+------
+
+# Final Plots and Summary
+
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+#Distribution of educational level by gender
+education <- table(StudentsPerformance$gender, StudentsPerformance$parental.level.of.education)
+barplot(education, main="Level of education by Gender", 
+   xlab="Level of education", legend = c("Female", "Male"))
+```
+
+### Description One
+
+> In this figure, we found that the Master's degree had the lowest number of the participants and the highest number is the associate's degree. In addition, the figure also shows that the females was more than the males in most of the education level.
+
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+P1<- ggplot(StudentsPerformance, 
+       aes(x=gender, y=math.score,fill=gender)) + 
+       geom_boxplot()+
+       xlab("Gender") + ylab("Math Scores") +
+       ggtitle("Math Scores by Gender")
+
+P2<- ggplot(StudentsPerformance, 
+       aes(x=gender, y=writing.score,fill=gender)) + 
+       geom_boxplot()+
+       xlab("Gender") + ylab("Writing Scores") +
+       ggtitle("Writing Scores by Gender")
+
+P3<- ggplot(StudentsPerformance, 
+       aes(x=gender, y=reading.score,fill=gender)) + 
+       geom_boxplot()+
+       xlab("Gender") + ylab("Reding Scores") +
+       ggtitle("Reading Scores by Gender")
+
+grid.arrange(P1, P2, P3, ncol = 2)
+```
+
+### Description Two
+
+> After completing the previous three analyzes, we found that there is a strong correlation between score achievement and:
+for math, males always get higher scores, while in reading and writing females always get the highest scores.
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+#the correlation between gender, race.ethnicity and level of education
+ggplot(StudentsPerformance, aes(x=race.ethnicity,y=parental.level.of.education)) +
+      geom_point(aes(color =  gender))
+```
+
+### Description Three
+
+> The figure above appear the males or females predominate in each group and each level of education.
+
+
+------
+
+# Reflection
+
+> This dataset includes scores from three exams and a variety of personal, social, and economic factors that have interaction effects upon them.
+
+> The dataset contain 1,000 observations and 8 variables.
+
+> We start our analysis with summuraize all data so we can choose the most affictive variables to start with it such as:
+
+> **Gender:** is the most affective variable to see how many female and male in this test.
+
+> **parental.level.of.education:** it's also important variable.
+
+> **math,reading and writing score:** are the main variables that affect our analysis.
+
+> At the end, I found that the dataset was very impressive to me and I joyable to did this analyze.
+
+
+> **Future improvement** can be made if more data can be collected as we can answer the question below:
+- What would be the best way to improve student scores on each test?
+If the data set has more records and information the quality of analysis can be improved and this question and other will be answered.
+
+
+# References
+
+https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf 
